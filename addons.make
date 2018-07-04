@@ -1,0 +1,4 @@
+ofxGui
+ofxMercatorMap
+ofxStreetView
+ofxXmlSettings
