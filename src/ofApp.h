@@ -9,7 +9,8 @@
 struct streetviewsFromDisc {
     ofMesh mesh;
     ofImage image;
-    float lat, lon, rot;
+    float lat, lon;
+    int rot;
 };
 
 class ofApp : public ofBaseApp{

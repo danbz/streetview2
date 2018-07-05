@@ -34,14 +34,14 @@ void ofApp::setup(){
     // streetview.setLatLon( 50.7531791,5.6960133 ); //liege netherlands border post  2
     
     // download the first streetview from online
-//    ofxStreetView newStreet;
-//    streetview.push_back(newStreet);
-//    streetview[0].setLatLon(viewLat, viewLong);
-//    streetview[0].setZoom(3);
-//    ofPixels texturePixels;
-//    textureImage = streetview[0].getTexture(); //pull in pano texture
-//    textureImage.readToPixels(texturePixels);
-//    panoImage.setFromPixels(texturePixels);
+    //    ofxStreetView newStreet;
+    //    streetview.push_back(newStreet);
+    //    streetview[0].setLatLon(viewLat, viewLong);
+    //    streetview[0].setZoom(3);
+    //    ofPixels texturePixels;
+    //    textureImage = streetview[0].getTexture(); //pull in pano texture
+    //    textureImage.readToPixels(texturePixels);
+    //    panoImage.setFromPixels(texturePixels);
     
     b_drawPointCloud = b_showGui = true;
     b_enableLight = b_updateMesh = b_meshExists = false;;
@@ -65,7 +65,7 @@ void ofApp::setup(){
     rotOffset[0] = 0;
     xOffset[0] = 0;
     yOffset[0] = 0;
-   
+    
     // mercator mapsetup // leftLon, bottomLat, rightLon, topLat
     merMapWidth = 2000;
     merMapHeight =1000;
@@ -129,35 +129,43 @@ void ofApp::draw(){
         //            // meshMaker.setNormals(mesh);
         //            b_meshExists = true;
         //        }
-                //mesh.setMode(OF_PRIMITIVE_POINTS);
-                //glEnable(GL_POINT_SMOOTH); // use circular points instead of square points
-               // ofPushMatrix();
-                //ofRotateZ(98); //correct alignment of meshes
-               // ofScale(1, -1, -1);  // the projected points are 'upside down' and 'backwards'
-                // ofTranslate(0, 0, 0); // center the points a bit
-                glEnable(GL_DEPTH_TEST);
-                glShadeModel(GL_TRIANGLES);
+        //mesh.setMode(OF_PRIMITIVE_POINTS);
+        //glEnable(GL_POINT_SMOOTH); // use circular points instead of square points
+        ofPushMatrix();
+        //ofRotateZ(98); //correct alignment of meshes
+        // ofScale(1, -1, -1);  // the projected points are 'upside down' and 'backwards'
+        // ofTranslate(0, 0, 0); // center the points a bit
+        glEnable(GL_DEPTH_TEST);
+        glShadeModel(GL_TRIANGLES);
         //        mesh.drawVertices();
         ofDrawCircle(10, 10,  5);
         for (int i=0; i<localView.size(); i++){
             //ofDrawCircle(10*i+1, 10,  5);
             cout << "drawing local mesh "<< i << " of " << localView.size() << endl;
-            localView[i].mesh.setMode(OF_PRIMITIVE_TRIANGLES);
-            //localView[i].image.bind();
-            localView[i].mesh.drawVertices();
-            localView[i].image.draw(0,0);
-           // localView[i].image.unbind();
+            
+            ofPoint pOrigin = merMap.getScreenLocationFromLatLon(localView[0].lat, localView[0].lon); //
+            ofPoint p = merMap.getScreenLocationFromLatLon(localView[i].lat, localView[i].lon); // translate to location using mermap
+            ofSetColor(255,0,0);
+            ofTranslate((p.x - pOrigin.x) * scaleMeters, (p.y - pOrigin.y) * scaleMeters);
+            ofRotateZ(rotOffset[i]);
+            ofRotateZ(180-localView[i].rot);
+            ofDrawRectangle(0,0, 20, 10);
+            ofSetColor(255);
+            localView[i].mesh.setMode(OF_PRIMITIVE_POINTS);
+            localView[i].image.bind();
+            localView[i].mesh.draw();
+            //localView[i].image.draw(0,0);
+            localView[i].image.unbind();
         }
-               // ofPopMatrix();
+        ofPopMatrix();
     }
     cam.end();
     worldLight.disable();
     
     if (b_showGui) {
-        
-       // statusStream << streetview[0].getPanoId() << " lat " << viewLat << " lon " << viewLong << " dir " << streetview[0].getDirection() << streetview[0].getAddress() << ", " << streetview[0].getRegion() << "meshes " <<streetview.size() << " linkLvl " << linkLevel;
-       // ofDrawBitmapString(statusStream.str(), 20,  20);
-       // ofDrawBitmapString(statusStream2.str(), 20,  40);
+        // statusStream << streetview[0].getPanoId() << " lat " << viewLat << " lon " << viewLong << " dir " << streetview[0].getDirection() << streetview[0].getAddress() << ", " << streetview[0].getRegion() << "meshes " <<streetview.size() << " linkLvl " << linkLevel;
+        // ofDrawBitmapString(statusStream.str(), 20,  20);
+        // ofDrawBitmapString(statusStream2.str(), 20,  40);
         gui.draw();
     }
 }
@@ -270,28 +278,27 @@ void ofApp::exportPLY( ofMesh &mesh){ // export sequential .ply and .png files
     if (saveFileResult.bSuccess){
         ofFile file (saveFileResult.getPath());
         ofSystemAlertDialog("saving " + ofToString(streetview.size()) +" views to sequence of .ply and .png files, please wait...");
-        
         for(int i = 0; i < streetview.size(); i++){
             if ( streetview[i].bDataLoaded & streetview[i].bPanoLoaded) {
                 float lat = streetview[i].getLat();
                 float lon = streetview[i].getLon();
                 float rot = streetview[i].getDirection();
                 
-                if (!file.doesFileExist((saveFileResult.filePath + "model" + "_" + ofToString(lat) + "_" + ofToString(lon) + "_" + ofToString(rot) + ".ply"))) {
+                if (!file.doesFileExist((saveFileResult.filePath  + "_" + ofToString(lat) + "_" + ofToString(lon) + "_" + ofToString(rot) + ".ply"))) {
                     // add in here xml export to contain all streetview data available...
                     mesh = streetview[i].getDethMesh();
                     mesh.setMode(OF_PRIMITIVE_TRIANGLES);
-                    mesh.save(saveFileResult.filePath + "model" + "_" + ofToString(lat) + "_" + ofToString(lon) + "_" + ofToString(rot) + ".ply"); //= true saves as binary file / false saves as ascii
+                    mesh.save(saveFileResult.filePath  + "_" + ofToString(lat) + "_" + ofToString(lon) + "_" + ofToString(rot) + ".ply"); //= true saves as binary file / false saves as ascii
                     cout << "wrote ply file to .ply number " << i << endl;
                     ofPixels pixels;
                     ofTexture texture = streetview[i].getTexture();
                     texture.readToPixels(pixels);
                     ofImage image;
                     image.setFromPixels(pixels);
-                    image.save(saveFileResult.filePath + "texture" + "_" + ofToString(lat) + "_" + ofToString(lon) + "_" + ofToString(rot) + ".png");
+                    image.save(saveFileResult.filePath  + "_" + ofToString(lat) + "_" + ofToString(lon) + "_" + ofToString(rot) + ".png");
                     cout << "wrote tex file to .png number " << i << endl;
                 } else {
-                    cout << "file exists: " << (saveFileResult.filePath + "texture" + "_" + ofToString(lat) + "_" + ofToString(lon) + "_" + ofToString(rot) + ".png") << endl;
+                    cout << "file exists: " << (saveFileResult.filePath  + "_" + ofToString(lat) + "_" + ofToString(lon) + "_" + ofToString(rot) + ".png") << endl;
                 }
             }
         }
@@ -299,7 +306,6 @@ void ofApp::exportPLY( ofMesh &mesh){ // export sequential .ply and .png files
 }
 
 //--------------------------------------------------------------
-
 
 void ofApp::loadOBJ(ofMesh &mesh){
     
@@ -332,7 +338,7 @@ void ofApp::loadPlyData(){
         //        ofFile file(ofToDataPath(_file + "/"));
         //        string path = file.getAbsolutePath();
         //        file.close();
-                // if (fileExtension == "ply" || fileExtension == "PLY") {
+        // if (fileExtension == "ply" || fileExtension == "PLY") {
         // count files in directory
         string path = ofToDataPath(filePath + "/");
         ofDirectory dir(path);
@@ -352,28 +358,21 @@ void ofApp::loadPlyData(){
             cout << plyFileToload << " " << textureFileToload << " " << i << endl;
             localView[i].mesh.load(plyFileToload);
             localView[i].image.load(textureFileToload);
+            
+            // parse lat lon and rotation from '_' seprated elements of file names
+            string fileNameData =dir.getname(i*2);
+            
             localView[i].lat =0.0;
             localView[i].lon =0.0;
             localView[i].rot =0.0;
-            ofColor c=(255,100,100);
-            localView[i].mesh.addColor(c);
             
             cout << "loaded png & ply " << endl;
-            // localView[i].image.load(openFileResult.getPath());
-            // Load the selected image
-            // ofImage image;
-            // image.load(openFileResult.getPath());
-            // loadedImages.push_back(image);
-            // processedImages.push_back(processedImage);
-        } // end loop to load files
+        }
     }
 }
 
 void ofApp::loadViewsfromFile() {
-   // load saved street views from disc
-    
-    //localView
-    
+    // load saved street views from disc
 }
 
 //--------------------------------------------------------------
@@ -397,7 +396,7 @@ void ofApp::keyReleased(int key){
             
         case 'l':
         case 'L':
-             b_enableLight = !b_enableLight;
+            b_enableLight = !b_enableLight;
             break;
             
         case 's':
@@ -421,14 +420,6 @@ void ofApp::keyReleased(int key){
             
         case 'o':
         case 'O':
-//            openFileResult= ofSystemLoadDialog("Select an obj file"); //Open the Open File Dialog
-//            if (openFileResult.bSuccess){ //Check if the user opened a file
-//                ofLogVerbose("User selected a file");
-//                processOpenFileSelection(openFileResult);  //We have a file, check it and process it
-//            }
-//            else {
-//                ofLogVerbose("User hit cancel");
-//            }
             loadPlyData();
             break;
             
@@ -452,7 +443,6 @@ void ofApp::keyReleased(int key){
         case '=':
             loadLinks();
             break;
-            
     }
 }
 
