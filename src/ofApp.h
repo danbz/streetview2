@@ -5,6 +5,7 @@
 #include "ofxGui.h"
 #include "triangulateMesh.h"
 #include "ofxMercatorMap.h"
+#include "ofxXmlSettings.h"
 
 struct streetviewsFromDisc {
     ofMesh mesh;
@@ -37,7 +38,8 @@ public:
     void loadNewStreet( int degrees);
     void loadLinks();
     void loadViewsfromFile();
-    
+    void saveXMLData(string filePath, int localViewVectorPos);
+    bool loadXMLData(string filePath, int localViewVectorPos);
     //gui
     ofxFloatSlider xOffset[20], yOffset[20], scaleMeters;
     ofxIntSlider rotOffset[20], pointSize;
@@ -56,7 +58,7 @@ public:
     
     double viewLat, viewLong;
     bool b_drawPointCloud, b_enableLight, b_updateMesh, b_showGui, b_meshExists;
-    string fileName;
+    string fileName, XMLmodel;
     int linkLevel;
     
     triangulateMesh meshMaker;
@@ -68,6 +70,9 @@ public:
     vector <ofPoint>    streetviewsCoordinates;
     ofxMercatorMap      merMap;
     int merMapWidth, merMapHeight;
+    
+    // XML exif data save and load
+    ofxXmlSettings XMLsettings;
     
     
 };

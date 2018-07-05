@@ -278,33 +278,88 @@ void ofApp::exportPLY( ofMesh &mesh){ // export sequential .ply and .png files
     if (saveFileResult.bSuccess){
         ofFile file (saveFileResult.getPath());
         ofSystemAlertDialog("saving " + ofToString(streetview.size()) +" views to sequence of .ply and .png files, please wait...");
+        
         for(int i = 0; i < streetview.size(); i++){
+            string filename = saveFileResult.filePath  + "_" + streetview[i].getPanoId();
             if ( streetview[i].bDataLoaded & streetview[i].bPanoLoaded) {
-                float lat = streetview[i].getLat();
-                float lon = streetview[i].getLon();
-                float rot = streetview[i].getDirection();
-                
-                if (!file.doesFileExist((saveFileResult.filePath  + "_" + ofToString(lat) + "_" + ofToString(lon) + "_" + ofToString(rot) + ".ply"))) {
+                if (!file.doesFileExist( filename + ".ply")) {
                     // add in here xml export to contain all streetview data available...
                     mesh = streetview[i].getDethMesh();
                     mesh.setMode(OF_PRIMITIVE_TRIANGLES);
-                    mesh.save(saveFileResult.filePath  + "_" + ofToString(lat) + "_" + ofToString(lon) + "_" + ofToString(rot) + ".ply"); //= true saves as binary file / false saves as ascii
+                    mesh.save(fileName + ".ply"); //= true saves as binary file / false saves as ascii
                     cout << "wrote ply file to .ply number " << i << endl;
                     ofPixels pixels;
                     ofTexture texture = streetview[i].getTexture();
                     texture.readToPixels(pixels);
                     ofImage image;
                     image.setFromPixels(pixels);
-                    image.save(saveFileResult.filePath  + "_" + ofToString(lat) + "_" + ofToString(lon) + "_" + ofToString(rot) + ".png");
+                    image.save(fileName + ".png");
                     cout << "wrote tex file to .png number " << i << endl;
+                    // save XML details of ply scene
+                    saveXMLData(fileName, i);
                 } else {
-                    cout << "file exists: " << (saveFileResult.filePath  + "_" + ofToString(lat) + "_" + ofToString(lon) + "_" + ofToString(rot) + ".png") << endl;
+                    cout << "file exists: " << (fileName + ".png") << endl;
                 }
             }
         }
     }
 }
 
+//--------------------------------------------------------------
+
+void ofApp::saveXMLData(string filePath, int i){ //put some some settings into an XML file
+    
+    float lat = streetview[i].getLat();
+    float lon = streetview[i].getLon();
+    float rot = streetview[i].getDirection();
+    
+    XMLsettings.addTag("Streetview panorama data");
+    XMLsettings.setValue("latitude", " ");
+    XMLsettings.setValue("longitude", " ");
+    XMLsettings.setValue("heading", " ");
+    XMLsettings.setValue("yaw", " ");
+    XMLsettings.setValue("tilt", " ");
+    XMLsettings.setValue("roll", " ");
+    XMLsettings.setValue("elevation", " ");
+    XMLsettings.setValue("altitude", " ");
+    XMLsettings.setValue("linkdata", " ");
+    XMLsettings.saveFile(filePath + ".xml"); //puts <panoramaID>.xml file in the current recordedframe folder
+    string myXml;
+    XMLsettings.copyXmlToString(myXml);
+    cout << myXml <<endl ;
+}
+
+//--------------------------------------------------------------
+
+bool ofApp::loadXMLData(string filePath, int i) { // load exifXML file from the selected folder and get the values out
+    // add in the local view things here !
+    if (XMLsettings.loadFile(filePath + "/exifSettings.xml")){
+        XMLmodel = XMLsettings.getValue("exif:model", "");
+        string thisModel ="Volca";
+        if (XMLmodel.find(thisModel) != string::npos){
+            //cout << filePath << "/exifSettings.xml" << endl;
+            localView[i].lat = XMLsettings.getValue("latitude", 0);
+            localView[i].lon = XMLsettings.getValue("longitude", 0);
+            localView[i].rot = XMLsettings.getValue("heading", 0);
+            localView[i].rot = XMLsettings.getValue("heading", 0);
+            localView[i].rot = XMLsettings.getValue("yaw", 0);
+            localView[i].rot = XMLsettings.getValue("tilt", 0);
+            localView[i].rot = XMLsettings.getValue("roll", 0);
+            localView[i].rot = XMLsettings.getValue("elevation", 0);
+            localView[i].rot = XMLsettings.getValue("altitude", 0);
+            localView[i].rot = XMLsettings.getValue("linkdata", 0);
+            string myXml;
+            XMLsettings.copyXmlToString(myXml);
+            cout << "loaded XML data: " << myXml <<endl ;
+            return true;
+        } else {
+            ofSystemAlertDialog("Correct streetview XML metadata not found. Is the streetView.xml file corrupt?");
+        }
+    } else {
+        ofSystemAlertDialog("No  XML metadata file found. Is this a streetview recording folder?");
+        return false;
+    }
+}
 //--------------------------------------------------------------
 
 void ofApp::loadOBJ(ofMesh &mesh){
@@ -360,7 +415,7 @@ void ofApp::loadPlyData(){
             localView[i].image.load(textureFileToload);
             
             // parse lat lon and rotation from '_' seprated elements of file names
-            string fileNameData =dir.getname(i*2);
+            string fileNameData =dir.getName(i*2);
             
             localView[i].lat =0.0;
             localView[i].lon =0.0;
