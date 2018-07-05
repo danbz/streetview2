@@ -1,9 +1,10 @@
 //
 //  triangulateMesh.h
-//  volume-camera
+//  from volume-camera project
 //
 //  Created by Dan Buzzo on 24/08/2017.
-//
+//  this version 5/7/18
+//  http://www.buzzo.com
 //
 
 #pragma once

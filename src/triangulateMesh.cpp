@@ -1,9 +1,11 @@
 //
 // triangulateMesh.cpp
-// volca project
+//  from volume-camera project
 //
 // Created by Dan Buzzo on 24/08/2017.
 // take input RGB & greycale depth images and create triangulated point cloud mesh
+//  this version 5/7/18
+//  http://www.buzzo.com
 //
 
 #include "triangulateMesh.h"
