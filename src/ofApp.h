@@ -3,14 +3,18 @@
 #include "ofMain.h"
 #include "ofxStreetView.h"
 #include "ofxGui.h"
-//#include "ofxGeo.h"
 #include "triangulateMesh.h"
 #include "ofxMercatorMap.h"
 
-
+struct streetviewsFromDisc {
+    ofMesh mesh;
+    ofImage image;
+    float lat, lon, rot;
+};
 
 class ofApp : public ofBaseApp{
 public:
+    
     void setup();
     void update();
     void draw();
@@ -31,6 +35,7 @@ public:
     void processOpenFileSelection(ofFileDialogResult openFileResult);
     void loadNewStreet( int degrees);
     void loadLinks();
+    void loadViewsfromFile();
     
     //gui
     ofxFloatSlider xOffset[20], yOffset[20], scaleMeters;
@@ -45,6 +50,7 @@ public:
     ofEasyCam cam;
     
     vector <ofxStreetView> streetview;
+    vector <streetviewsFromDisc> localView;
     ofFileDialogResult openFileResult;
     
     double viewLat, viewLong;

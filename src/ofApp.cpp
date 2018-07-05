@@ -34,20 +34,20 @@ void ofApp::setup(){
     // streetview.setLatLon( 50.7531791,5.6960133 ); //liege netherlands border post  2
     
     // download the first streetview from online
-    ofxStreetView newStreet;
-    streetview.push_back(newStreet);
-    streetview[0].setLatLon(viewLat, viewLong);
-    streetview[0].setZoom(3);
-    ofPixels texturePixels;
-    textureImage = streetview[0].getTexture(); //pull in pano texture
-    textureImage.readToPixels(texturePixels);
-    panoImage.setFromPixels(texturePixels);
+//    ofxStreetView newStreet;
+//    streetview.push_back(newStreet);
+//    streetview[0].setLatLon(viewLat, viewLong);
+//    streetview[0].setZoom(3);
+//    ofPixels texturePixels;
+//    textureImage = streetview[0].getTexture(); //pull in pano texture
+//    textureImage.readToPixels(texturePixels);
+//    panoImage.setFromPixels(texturePixels);
     
     b_drawPointCloud = b_showGui = true;
     b_enableLight = b_updateMesh = b_meshExists = false;;
     linkLevel = 0;
     
-    mesh = streetview[0].getDethMesh();
+    //mesh = streetview[0].getDethMesh();
     
     string num;
     gui.setup();
@@ -115,6 +115,7 @@ void ofApp::draw(){
             }
         }
     } else {
+            
         // display loaded meshes from disc
         
         //        if (b_meshExists == false) {
@@ -130,25 +131,32 @@ void ofApp::draw(){
         //            // meshMaker.setNormals(mesh);
         //            b_meshExists = true;
         //        }
-        //        mesh.setMode(OF_PRIMITIVE_POINTS);
-        //        //glEnable(GL_POINT_SMOOTH); // use circular points instead of square points
-        //        ofPushMatrix();
-        //        //ofRotateZ(98); //correct alignment of meshes
-        //        ofRotateZ(streetview[0].getDirection());
-        //        ofScale(1, -1, -1);  // the projected points are 'upside down' and 'backwards'
-        //        // ofTranslate(0, 0, 0); // center the points a bit
-        //        glEnable(GL_DEPTH_TEST);
-        //        glShadeModel(GL_TRIANGLES);
+                mesh.setMode(OF_PRIMITIVE_POINTS);
+                //glEnable(GL_POINT_SMOOTH); // use circular points instead of square points
+                ofPushMatrix();
+                //ofRotateZ(98); //correct alignment of meshes
+               // ofScale(1, -1, -1);  // the projected points are 'upside down' and 'backwards'
+                // ofTranslate(0, 0, 0); // center the points a bit
+                glEnable(GL_DEPTH_TEST);
+                glShadeModel(GL_TRIANGLES);
         //        mesh.drawVertices();
-        //        glDisable(GL_DEPTH_TEST);
-        //        ofPopMatrix();
+        
+        for (int i; i<localView.size(); i++){
+            
+            cout << "drawing local mesh "<< i << " of " << localView.size() << endl;
+            localView[i].image.bind();
+            localView[i].mesh.draw();
+            localView[i].image.unbind();
+
+        }
+                ofPopMatrix();
     }
     cam.end();
     worldLight.disable();
     
     if (b_showGui) {
         ofSetColor(255, 255, 255);
-        statusStream << streetview[0].getPanoId() << " lat " << viewLat << " lon " << viewLong << " dir " << streetview[0].getDirection() << streetview[0].getAddress() << ", " << streetview[0].getRegion() << "meshes " <<streetview.size() << " linkLvl " << linkLevel;
+       // statusStream << streetview[0].getPanoId() << " lat " << viewLat << " lon " << viewLong << " dir " << streetview[0].getDirection() << streetview[0].getAddress() << ", " << streetview[0].getRegion() << "meshes " <<streetview.size() << " linkLvl " << linkLevel;
         ofDrawBitmapString(statusStream.str(), 20,  20);
         ofDrawBitmapString(statusStream2.str(), 20,  40);
         gui.draw();
@@ -230,9 +238,7 @@ void ofApp::exportOBJ(ofMesh &mesh){
         //        for(int i = 0; i < streetview.size(); i++){ //build new mesh to export
         //            // ofRotateZ(streetview[i].getDirection()+rotOffset[i]);
         //            // ofTranslate(streetview[i].getLon()*longOffset[i], streetview[i].getLat()*latOffset[i], 0);
-        //            streetview[i].getTexture().bind();
         //            mesh.append(streetview[i].getDethMesh());
-        //            streetview[i].getTexture().unbind();
         //        }
         
         obj.open(ofToDataPath(saveFileResult.filePath),ofFile::WriteOnly);
@@ -317,65 +323,71 @@ void ofApp::loadOBJ(ofMesh &mesh){
 
 void ofApp::processOpenFileSelection(ofFileDialogResult openFileResult){
     
-    ofLogVerbose("getName(): "  + openFileResult.getName());
-    ofLogVerbose("getPath(): "  + openFileResult.getPath());
-    
+    cout << "getName(): "  << openFileResult.getName() << endl;
+    cout << "getPath(): "  << openFileResult.getPath() << endl;
     ofFile file (openFileResult.getPath());
-    
+    //ofFilePath filePath (openFileResult.getPath());
     if (file.exists()){
-        //Limiting this example to one image so we delete previous ones
-        
         ofLogVerbose("The file exists - now checking the type via file extension");
         string fileExtension = ofToUpper(file.getExtension());
+        cout << "its a file ok" << endl;
+         ofDirectory directory  (openFileResult.getPath());
+        ofFile file(ofToDataPath(_file + "/"));
+        string path = file.getAbsolutePath();
+        file.close();
         
         //We only want images
         if (fileExtension == "ply" || fileExtension == "PLY") {
+            //loop through corresponding files in folder
+            cout << "load ply file" << endl;
+            int i = localView.size();
+            streetviewsFromDisc newViewfromDisk;
+            localView.push_back(newViewfromDisk);
             
-            cout << "its a ply file ok" << endl;
-            //Save the file extension to use when we save out
-            //originalFileExtension = fileExtension;
+           // string pathToPng = file.removeExt(openFileResult.getPath()) ;
+            cout << pathToPng << endl;
+            string plyFileToload = path + ".ply";
+            string textureFileToload = path + ".png";
+            localView[i].mesh.load(plyFileToload);
+            localView[i].image.load(textureFileToload);
             
-            //Load the selected image
-            //            ofImage image;
-            //            image.load(openFileResult.getPath());
-            //            if (image.getWidth()>ofGetWidth() || image.getHeight() > ofGetHeight())
-            //            {
-            //                image.resize(image.getWidth()/2, image.getHeight()/2);
-            //            }
-            //loadedImages.push_back(image);
-            //Make some short variables
-            //            int w = image.getWidth();
-            //            int h = image.getHeight();
-            //Make a new image to save manipulation by copying the source
-            //            ofImage processedImage = image;
-            //Walk through the pixels
-            //            for (int y = 0; y < h; y++){
-            //
-            //                //Create a vector to store and sort the colors
-            //                vector<ofColor> colorsToSort;
-            //
-            //                for (int x = 0; x < w; x++){
-            //
-            //                    //Capture the colors for the row
-            //                    ofColor color = image.getColor(x, y);
-            //                    colorsToSort.push_back(color);
-            //                }
-            //
-            //                //Sort the colors for the row
-            //               // sort (colorsToSort.begin(), colorsToSort.end(), sortColorFunction);
-            //
-            //                for (int x = 0; x < w; x++)
-            //                {
-            //                    //Put the sorted colors back in the new image
-            //                    processedImage.setColor(x, y, colorsToSort[x]);
-            //                }
-            //            }
-            // Store the processed image
+            
+            // localView[i].image.load(openFileResult.getPath());
+            // Load the selected image
+            // ofImage image;
+            // image.load(openFileResult.getPath());
+            // loadedImages.push_back(image);
             // processedImages.push_back(processedImage);
+            
+            // end loop to load files
+            
+            // from volca
+//            ofFileDialogResult result = ofSystemLoadDialog("Choose a folder of recorded Volca PNG data", true, ofToDataPath(""));
+//            if (result.getPath() != "") {
+//                filePath =result.getPath();
+//                volcaRenderer.frameToPlay = 0;
+//                if (loadExifData(filePath)) {
+//                    loadSuccess = volcaRecorder.loadImageData(filePath, volca.recordWidth, volca.recordHeight);
+//
+//                    if (loadSuccess){
+//                        volca.playing = true;
+//                        cout << loadSuccess << " playing is true" << endl;
+//                    } else {
+//                        volca.playing = false;
+//                        cout << loadSuccess << " playing is false" << endl;
+//                    }
+//                }
+//            }
         }
     }
 }
 
+void ofApp::loadViewsfromFile() {
+   // load saved street views from disc
+    
+    //localView
+    
+}
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){

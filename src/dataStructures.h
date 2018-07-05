@@ -2,7 +2,7 @@
 //  dataStructures.h
 //  volume-camera
 //
-//  Created by Dan Buzzo on 01/09/2017.
+//  Created by Dan Buzzo on 01/09/2017. // modified 5/7/18
 //
 //
 
@@ -13,6 +13,7 @@
 
 
 #endif /* dataStructures_h */
+
 
 
 struct volca { // central volca object

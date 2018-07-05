@@ -1,11 +1,11 @@
 # based on ofxStreetView
 
-forked from http://patriciogonzalezvivo.com 
+forked from http://patriciogonzalezvivo.com
 
 this version extends to allow export of .ply files with corresponding .png panorama data and as triangulated .obj files.
 it adds a simple control panel for the first 20 panoramas to allow rotation, point-cloud dot-size selection and a scaling factor for improving alignment of multiple panoramas.
 
-the code is under constant revision and should be considered stable. 
+this project is ongoing development and should be used for experimental purposes only.
 
 # controls:
 
@@ -17,9 +17,11 @@ f : toggle fullscreen mode
 
 g: toggle gui
 
+o: open a .ply file and load to memory as ofMesh object
+
 up/right/down/left arrow keys - load an additional panorama at 0,90,180,270 degrees to the current panorama
 
-+ recurse through a tree of links listed in the data for exach panorama and load the panoaramas - one level at a time
++ recurse through a tree of links listed in the data for each panorama and load the panoaramas - one level at a time
 
 # dependencies
 ofxGui
@@ -41,7 +43,7 @@ By doing the call:
 
 	http://cbk0.google.com/cbk?output=xml&panoid=[pano_id]&dm=1
 
-We get information that looks like [this](http://maps.google.com/cbk?output=xml&cb_client=maps_sv&v=4&dm=1&hl=en&panoid=ki_KzVWkE87EgkPWg3QPXg) 
+We get information that looks like [this](http://maps.google.com/cbk?output=xml&cb_client=maps_sv&v=4&dm=1&hl=en&panoid=ki_KzVWkE87EgkPWg3QPXg)
 
 At <deptMap> you can seee a depth image encoded in base64 (and zlib compressed)
 
