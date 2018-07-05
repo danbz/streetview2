@@ -11,7 +11,8 @@ struct streetviewsFromDisc {
     ofMesh mesh;
     ofImage image;
     float lat, lon;
-    int rot;
+    int heading, yaw, tilt, groundheight, elevation;
+    string panoId;
 };
 
 class ofApp : public ofBaseApp{
