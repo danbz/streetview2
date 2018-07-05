@@ -32,7 +32,7 @@ public:
     void exportOBJ(ofMesh &mesh);
     void exportPLY(ofMesh &mesh);
     void loadOBJ(ofMesh &mesh);
-    void processOpenFileSelection(ofFileDialogResult openFileResult);
+    void loadPlyData();
     void loadNewStreet( int degrees);
     void loadLinks();
     void loadViewsfromFile();

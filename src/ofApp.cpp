@@ -85,8 +85,8 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackground(0);
-    
+    ofBackground(50);
+    ofSetColor(200, 200, 200);
     stringstream statusStream, statusStream2;
     if (b_enableLight) worldLight.enable();
     cam.begin();
@@ -115,8 +115,6 @@ void ofApp::draw(){
             }
         }
     } else {
-            
-        // display loaded meshes from disc
         
         //        if (b_meshExists == false) {
         //            ofPixels texturePixels;
@@ -131,34 +129,35 @@ void ofApp::draw(){
         //            // meshMaker.setNormals(mesh);
         //            b_meshExists = true;
         //        }
-                mesh.setMode(OF_PRIMITIVE_POINTS);
+                //mesh.setMode(OF_PRIMITIVE_POINTS);
                 //glEnable(GL_POINT_SMOOTH); // use circular points instead of square points
-                ofPushMatrix();
+               // ofPushMatrix();
                 //ofRotateZ(98); //correct alignment of meshes
                // ofScale(1, -1, -1);  // the projected points are 'upside down' and 'backwards'
                 // ofTranslate(0, 0, 0); // center the points a bit
                 glEnable(GL_DEPTH_TEST);
                 glShadeModel(GL_TRIANGLES);
         //        mesh.drawVertices();
-        
-        for (int i; i<localView.size(); i++){
-            
+        ofDrawCircle(10, 10,  5);
+        for (int i=0; i<localView.size(); i++){
+            //ofDrawCircle(10*i+1, 10,  5);
             cout << "drawing local mesh "<< i << " of " << localView.size() << endl;
-            localView[i].image.bind();
-            localView[i].mesh.draw();
-            localView[i].image.unbind();
-
+            localView[i].mesh.setMode(OF_PRIMITIVE_TRIANGLES);
+            //localView[i].image.bind();
+            localView[i].mesh.drawVertices();
+            localView[i].image.draw(0,0);
+           // localView[i].image.unbind();
         }
-                ofPopMatrix();
+               // ofPopMatrix();
     }
     cam.end();
     worldLight.disable();
     
     if (b_showGui) {
-        ofSetColor(255, 255, 255);
+        
        // statusStream << streetview[0].getPanoId() << " lat " << viewLat << " lon " << viewLong << " dir " << streetview[0].getDirection() << streetview[0].getAddress() << ", " << streetview[0].getRegion() << "meshes " <<streetview.size() << " linkLvl " << linkLevel;
-        ofDrawBitmapString(statusStream.str(), 20,  20);
-        ofDrawBitmapString(statusStream2.str(), 20,  40);
+       // ofDrawBitmapString(statusStream.str(), 20,  20);
+       // ofDrawBitmapString(statusStream2.str(), 20,  40);
         gui.draw();
     }
 }
@@ -321,64 +320,52 @@ void ofApp::loadOBJ(ofMesh &mesh){
 
 //--------------------------------------------------------------
 
-void ofApp::processOpenFileSelection(ofFileDialogResult openFileResult){
-    
-    cout << "getName(): "  << openFileResult.getName() << endl;
-    cout << "getPath(): "  << openFileResult.getPath() << endl;
-    ofFile file (openFileResult.getPath());
-    //ofFilePath filePath (openFileResult.getPath());
-    if (file.exists()){
-        ofLogVerbose("The file exists - now checking the type via file extension");
-        string fileExtension = ofToUpper(file.getExtension());
-        cout << "its a file ok" << endl;
-         ofDirectory directory  (openFileResult.getPath());
-        ofFile file(ofToDataPath(_file + "/"));
-        string path = file.getAbsolutePath();
-        file.close();
+void ofApp::loadPlyData(){
+    ofFileDialogResult result = ofSystemLoadDialog("Choose a folder of recorded Volca PNG data", true, ofToDataPath(""));
+    if (result.getPath() != "") {
+        string  filePath =result.getPath();
+        //    ofFile file (openFileResult.getPath());
+        //    if (file.exists()){
+        //        string fileExtension = ofToUpper(file.getExtension());
+        //        //cout << "its a file ok" << endl;
+        //        ofDirectory directory  (openFileResult.getPath());
+        //        ofFile file(ofToDataPath(_file + "/"));
+        //        string path = file.getAbsolutePath();
+        //        file.close();
+                // if (fileExtension == "ply" || fileExtension == "PLY") {
+        // count files in directory
+        string path = ofToDataPath(filePath + "/");
+        ofDirectory dir(path);
+        dir.allowExt("ply");
+        dir.allowExt("png");
+        dir.listDir();
+        dir.sort();
+        int numViewsToLoad = dir.size(); /// end count files in directory
         
-        //We only want images
-        if (fileExtension == "ply" || fileExtension == "PLY") {
-            //loop through corresponding files in folder
-            cout << "load ply file" << endl;
-            int i = localView.size();
+        cout << "load ply file from directory of " << numViewsToLoad << endl;
+        localView.clear();
+        for (int i=0; i<numViewsToLoad/2;i++){
             streetviewsFromDisc newViewfromDisk;
             localView.push_back(newViewfromDisk);
-            
-           // string pathToPng = file.removeExt(openFileResult.getPath()) ;
-            cout << pathToPng << endl;
-            string plyFileToload = path + ".ply";
-            string textureFileToload = path + ".png";
+            string plyFileToload = path + dir.getName(i*2);
+            string textureFileToload = path + dir.getName(i*2+1);
+            cout << plyFileToload << " " << textureFileToload << " " << i << endl;
             localView[i].mesh.load(plyFileToload);
             localView[i].image.load(textureFileToload);
+            localView[i].lat =0.0;
+            localView[i].lon =0.0;
+            localView[i].rot =0.0;
+            ofColor c=(255,100,100);
+            localView[i].mesh.addColor(c);
             
-            
+            cout << "loaded png & ply " << endl;
             // localView[i].image.load(openFileResult.getPath());
             // Load the selected image
             // ofImage image;
             // image.load(openFileResult.getPath());
             // loadedImages.push_back(image);
             // processedImages.push_back(processedImage);
-            
-            // end loop to load files
-            
-            // from volca
-//            ofFileDialogResult result = ofSystemLoadDialog("Choose a folder of recorded Volca PNG data", true, ofToDataPath(""));
-//            if (result.getPath() != "") {
-//                filePath =result.getPath();
-//                volcaRenderer.frameToPlay = 0;
-//                if (loadExifData(filePath)) {
-//                    loadSuccess = volcaRecorder.loadImageData(filePath, volca.recordWidth, volca.recordHeight);
-//
-//                    if (loadSuccess){
-//                        volca.playing = true;
-//                        cout << loadSuccess << " playing is true" << endl;
-//                    } else {
-//                        volca.playing = false;
-//                        cout << loadSuccess << " playing is false" << endl;
-//                    }
-//                }
-//            }
-        }
+        } // end loop to load files
     }
 }
 
@@ -410,8 +397,7 @@ void ofApp::keyReleased(int key){
             
         case 'l':
         case 'L':
-            // b_enableLight = !b_enableLight;
-            //calculateVector();
+             b_enableLight = !b_enableLight;
             break;
             
         case 's':
@@ -435,14 +421,15 @@ void ofApp::keyReleased(int key){
             
         case 'o':
         case 'O':
-            openFileResult= ofSystemLoadDialog("Select an obj file"); //Open the Open File Dialog
-            if (openFileResult.bSuccess){ //Check if the user opened a file
-                ofLogVerbose("User selected a file");
-                processOpenFileSelection(openFileResult);  //We have a file, check it and process it
-            }
-            else {
-                ofLogVerbose("User hit cancel");
-            }
+//            openFileResult= ofSystemLoadDialog("Select an obj file"); //Open the Open File Dialog
+//            if (openFileResult.bSuccess){ //Check if the user opened a file
+//                ofLogVerbose("User selected a file");
+//                processOpenFileSelection(openFileResult);  //We have a file, check it and process it
+//            }
+//            else {
+//                ofLogVerbose("User hit cancel");
+//            }
+            loadPlyData();
             break;
             
         case OF_KEY_UP:
