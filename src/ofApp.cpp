@@ -6,7 +6,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofSetVerticalSync(true);
-    ofEnableDepthTest();
+    
     
     viewLat = 51.462088;//stokes croft
     viewLong = -2.5901384;
@@ -93,7 +93,7 @@ void ofApp::draw(){
     ofDrawAxis(100);
     ofDrawRotationAxes(1);
     glPointSize(pointSize);
-    
+    ofEnableDepthTest();
     if (b_drawPointCloud) {
         for(int i = 0; i < streetview.size(); i++){
             if ( streetview[i].bDataLoaded & streetview[i].bPanoLoaded) {
@@ -141,8 +141,7 @@ void ofApp::draw(){
         ofDrawCircle(10, 10,  5);
         for (int i=0; i<localView.size(); i++){
             //ofDrawCircle(10*i+1, 10,  5);
-            cout << "drawing local mesh "<< i << " of " << localView.size() << endl;
-            
+           // cout << "drawing local mesh "<< i << " of " << localView.size() << endl;
             ofPoint pOrigin = merMap.getScreenLocationFromLatLon(localView[0].lat, localView[0].lon); //
             ofPoint p = merMap.getScreenLocationFromLatLon(localView[i].lat, localView[i].lon); // translate to location using mermap
             ofSetColor(255,0,0);
@@ -161,7 +160,7 @@ void ofApp::draw(){
     }
     cam.end();
     worldLight.disable();
-    
+    ofDisableDepthTest();
     if (b_showGui) {
         // statusStream << streetview[0].getPanoId() << " lat " << viewLat << " lon " << viewLong << " dir " << streetview[0].getDirection() << streetview[0].getAddress() << ", " << streetview[0].getRegion() << "meshes " <<streetview.size() << " linkLvl " << linkLevel;
         // ofDrawBitmapString(statusStream.str(), 20,  20);
@@ -308,7 +307,7 @@ void ofApp::saveXMLData(string filePath, int i){ //put some some settings into a
     float lon = streetview[i].getLon();
     float rot = streetview[i].getDirection();
     
-    XMLsettings.addTag("Streetview panorama data");
+   // XMLsettings.addTag("streetview-panorama-data");
     XMLsettings.setValue("panoId",  streetview[i].getPanoId());
     XMLsettings.setValue("latitude",  streetview[i].getLat());
     XMLsettings.setValue("longitude", streetview[i].getLon());
@@ -328,34 +327,33 @@ void ofApp::saveXMLData(string filePath, int i){ //put some some settings into a
 
 //--------------------------------------------------------------
 
-bool ofApp::loadXMLData(string filePath, int i) { // load exifXML file from the selected folder and get the values out
-    // add in the local view things here !
-    if (XMLsettings.loadFile(filePath + "/exifSettings.xml")){
-        XMLmodel = XMLsettings.getValue("exif:model", "");
-        string thisScene ="Streetview panorama data";
-        if (XMLmodel.find(thisScene) != string::npos){
-            //cout << filePath << "/exifSettings.xml" << endl;
-            localView[i].lat = XMLsettings.getValue("latitude", 0);
-            localView[i].lon = XMLsettings.getValue("longitude", 0);
-            localView[i].heading = XMLsettings.getValue("heading", 0);
-            localView[i].panoId = XMLsettings.getValue("panoId", 0);
-            localView[i].yaw = XMLsettings.getValue("yaw", 0);
-            localView[i].tilt = XMLsettings.getValue("tilt", 0);
-            localView[i].elevation = XMLsettings.getValue("elevation", 0);
-            localView[i].groundheight = XMLsettings.getValue("groundheight", 0);
-            //localView[i].rot = XMLsettings.getValue("linkdata", 0);
-            string myXml;
-            XMLsettings.copyXmlToString(myXml);
-            cout << "loaded XML data: " << myXml <<endl ;
-            return true;
-        } else {
-            ofSystemAlertDialog("Correct streetview XML metadata not found. Is the streetView.xml file corrupt?");
-        }
-    } else {
+void ofApp::loadXMLData(string filePath, int i) { // load XML file from the selected folder and get the values out
+    cout << "load XML file " << filePath << endl;
+    if (XMLsettings.loadFile( filePath )){
+        // XMLmodel = XMLsettings.getValue("exif:model", "");
+        // string thisScene ="Streetview panorama data";
+        // if (XMLmodel.find(thisScene) != string::npos){
+        // cout << filePath << "/exifSettings.xml" << endl;
+        localView[i].lat = XMLsettings.getValue("latitude", 0.0);
+        localView[i].lon = XMLsettings.getValue("longitude", 0.0);
+        localView[i].heading = XMLsettings.getValue("heading", 0);
+        localView[i].panoId = XMLsettings.getValue("panoId", " ");
+        localView[i].yaw = XMLsettings.getValue("yaw", 0);
+        localView[i].tilt = XMLsettings.getValue("tilt", 0);
+        localView[i].elevation = XMLsettings.getValue("elevation", 0);
+        localView[i].groundheight = XMLsettings.getValue("groundheight", 0);
+        string myXml;
+        XMLsettings.copyXmlToString(myXml);
+        cout << "loaded XML data: " << myXml <<endl ;
+        //    }
+        //    // else {
+        //    //   ofSystemAlertDialog("Correct streetview XML metadata not found. Is the streetView.xml file corrupt?");
+    }
+    else {
         ofSystemAlertDialog("No  XML metadata file found. Is this a streetview recording folder?");
-        return false;
     }
 }
+
 //--------------------------------------------------------------
 
 void ofApp::loadOBJ(ofMesh &mesh){

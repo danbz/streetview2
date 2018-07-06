@@ -5,7 +5,7 @@
 #include "ofxGui.h"
 #include "triangulateMesh.h"
 #include "ofxMercatorMap.h"
-#include "ofxXmlSettings.h"
+//#include "ofxXmlSettings.h"
 
 struct streetviewsFromDisc {
     ofMesh mesh;
@@ -40,7 +40,7 @@ public:
     void loadLinks();
     void loadViewsfromFile();
     void saveXMLData(string filePath, int localViewVectorPos);
-    bool loadXMLData(string filePath, int localViewVectorPos);
+    void loadXMLData(string filePath, int localViewVectorPos);
     //gui
     ofxFloatSlider xOffset[20], yOffset[20], scaleMeters;
     ofxIntSlider rotOffset[20], pointSize;
