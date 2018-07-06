@@ -70,8 +70,12 @@ void ofApp::setup(){
     merMapWidth = 2000;
     merMapHeight =1000;
     merMap.setup(merMapWidth,merMapHeight, -2.593, 51.46, -2.586, 51.465);
-    //ofVec3f camStart = (merMapWidth/2, merMapHeight/2, -100);
-    //cam.setUpAxis(camStart); //set up useful location for camera start
+    
+    // easyCam setup
+    // ofVec3f camStart = (merMapWidth/2, merMapHeight/2, -100);
+    // cam.setUpAxis(camStart); //set up useful location for camera start
+    camDist = 0;
+    cam.setDistance(camDist);
 }
 
 //--------------------------------------------------------------
@@ -131,32 +135,30 @@ void ofApp::draw(){
         //        }
         //mesh.setMode(OF_PRIMITIVE_POINTS);
         //glEnable(GL_POINT_SMOOTH); // use circular points instead of square points
-        ofPushMatrix();
         //ofRotateZ(98); //correct alignment of meshes
         // ofScale(1, -1, -1);  // the projected points are 'upside down' and 'backwards'
         // ofTranslate(0, 0, 0); // center the points a bit
         glEnable(GL_DEPTH_TEST);
         glShadeModel(GL_TRIANGLES);
         //        mesh.drawVertices();
-        ofDrawCircle(10, 10,  5);
+        ofPoint pOrigin = merMap.getScreenLocationFromLatLon(localView[0].lat, localView[0].lon); //
         for (int i=0; i<localView.size(); i++){
-            //ofDrawCircle(10*i+1, 10,  5);
-           // cout << "drawing local mesh "<< i << " of " << localView.size() << endl;
-            ofPoint pOrigin = merMap.getScreenLocationFromLatLon(localView[0].lat, localView[0].lon); //
-            ofPoint p = merMap.getScreenLocationFromLatLon(localView[i].lat, localView[i].lon); // translate to location using mermap
-            ofSetColor(255,0,0);
-            ofTranslate((p.x - pOrigin.x) * scaleMeters, (p.y - pOrigin.y) * scaleMeters);
-            ofRotateZ(rotOffset[i]);
-            ofRotateZ(180-localView[i].heading);
-            ofDrawRectangle(0,0, 20, 10);
-            ofSetColor(255);
-            localView[i].mesh.setMode(OF_PRIMITIVE_POINTS);
-            localView[i].image.bind();
-            localView[i].mesh.draw();
-            //localView[i].image.draw(0,0);
-            localView[i].image.unbind();
+            if (showMesh[i]) {
+                ofPushMatrix();
+                ofPoint p = merMap.getScreenLocationFromLatLon(localView[i].lat, localView[i].lon); // translate to location using mermap
+                ofTranslate((p.x - pOrigin.x) * scaleMeters, (p.y - pOrigin.y) * scaleMeters);
+                ofRotateZ(rotOffset[i]);
+                ofRotateZ(localView[i].heading);
+                ofSetColor(255,0,0);
+                ofDrawRectangle(0,0, 10, 2);
+                ofSetColor(255);
+                localView[i].mesh.setMode(OF_PRIMITIVE_POINTS);
+                localView[i].image.bind();
+                localView[i].mesh.draw();
+                localView[i].image.unbind();
+                ofPopMatrix();
+            }
         }
-        ofPopMatrix();
     }
     cam.end();
     worldLight.disable();
@@ -426,6 +428,25 @@ void ofApp::loadViewsfromFile() {
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     
+    switch (key) {
+        case OF_KEY_UP:
+            
+            cam.dolly(-1);
+            break;
+            
+        case OF_KEY_DOWN:
+            
+            cam.dolly(1);
+            break;
+            
+        case OF_KEY_LEFT:
+            cam.truck(-1);
+            break;
+            
+        case OF_KEY_RIGHT:
+            cam.truck(1);
+            break;
+    }
 }
 
 //--------------------------------------------------------------
@@ -471,19 +492,24 @@ void ofApp::keyReleased(int key){
             loadPlyData();
             break;
             
-        case OF_KEY_UP:
+        case 'r':
+        case 'R':
+            cam.reset();
+            break;
+            
+        case 'w':
             loadNewStreet(0);
             break;
             
-        case OF_KEY_DOWN:
+        case 'x':
             loadNewStreet(180);
             break;
             
-        case OF_KEY_LEFT:
+        case 'a':
             loadNewStreet(90);
             break;
             
-        case OF_KEY_RIGHT:
+        case 'd':
             loadNewStreet(270);
             break;
             

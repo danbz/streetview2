@@ -19,9 +19,15 @@ g: toggle gui
 
 o: open a .ply file and load to memory as ofMesh object
 
-up/right/down/left arrow keys - load an additional panorama at 0,90,180,270 degrees to the current panorama
+w,a,d,x - load an additional panorama at 0,90,180,270 degrees to the current panorama
 
-+ recurse through a tree of links listed in the data for each panorama and load the panoaramas - one level at a time
+up,down, left, right, truck and dolly camera.
+
+click and drag to look,
+
+r: reset camera position
+
++: recurse through a tree of links listed in the data for each panorama and load the panoaramas - one level at a time
 
 # dependencies
 ofxGui

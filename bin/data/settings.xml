@@ -1,12 +1,12 @@
 <group>
 	<showMesh_0>1</showMesh_0>
-	<Rotation_offset0>-88</Rotation_offset0>
+	<Rotation_offset0>-46</Rotation_offset0>
 	<showMesh_1>1</showMesh_1>
-	<Rotation_offset1>59</Rotation_offset1>
+	<Rotation_offset1>-46</Rotation_offset1>
 	<showMesh_2>1</showMesh_2>
-	<Rotation_offset2>61</Rotation_offset2>
+	<Rotation_offset2>0</Rotation_offset2>
 	<showMesh_3>1</showMesh_3>
-	<Rotation_offset3>52</Rotation_offset3>
+	<Rotation_offset3>0</Rotation_offset3>
 	<showMesh_4>1</showMesh_4>
 	<Rotation_offset4>0</Rotation_offset4>
 	<showMesh_5>1</showMesh_5>
@@ -40,6 +40,6 @@
 	<showMesh_19>1</showMesh_19>
 	<Rotation_offset19>0</Rotation_offset19>
 	<pointSize>2</pointSize>
-	<scaleMeters>0.33835</scaleMeters>
+	<scaleMeters>0.33</scaleMeters>
 <group/>
 </group>

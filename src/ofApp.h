@@ -60,7 +60,7 @@ public:
     double viewLat, viewLong;
     bool b_drawPointCloud, b_enableLight, b_updateMesh, b_showGui, b_meshExists;
     string fileName, XMLmodel;
-    int linkLevel;
+    int linkLevel, camDist;
     
     triangulateMesh meshMaker;
     
