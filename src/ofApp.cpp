@@ -145,7 +145,7 @@ void ofApp::draw(){
         glEnable(GL_DEPTH_TEST);
         glShadeModel(GL_TRIANGLES);
         //        mesh.drawVertices();
-        floorMap.draw(-floorMap.getWidth()/2, - floorMap.getHeight()/2);
+       // floorMap.draw(-floorMap.getWidth()/2, - floorMap.getHeight()/2);
         ofPoint pOrigin = merMap.getScreenLocationFromLatLon(localView[0].lat, localView[0].lon); //
         for (int i=0; i<localView.size(); i++){
             if (showMesh[i]) {
@@ -250,7 +250,7 @@ void ofApp::exportOBJ(ofMesh &passedMesh){
     if (saveFileResult.bSuccess){
         ofColor c;
         mesh = streetview[view].getDethMesh();
-        
+        texture = streetview[0].getTexture();
         ofPixels texturePixels;
                     textureImage = streetview[0].getTexture(); //pull in pano texture
                     textureImage.readToPixels(texturePixels);
@@ -282,13 +282,16 @@ void ofApp::exportOBJ(ofMesh &passedMesh){
         obj << "#texture\n";
         for(int i = 0; i < mesh.getNumTexCoords(); i++){
             ofVec2f v = mesh.getTexCoord(i);
-            obj << "vt " + ofToString(v.x) + " " + ofToString(v.y)  +"\n";
+            float t1 = ofNormalize(v.x, 0.0, texture.getWidth());
+            float t2 = ofNormalize(v.y, 0.0, texture.getHeight());
+          //  obj << "vt " + ofToString(v.x) + " " + ofToString(v.y)  +"\n";
+             obj << "vt " + ofToString(t1) + " " + ofToString(1-t2)  +"\n";
         }
         obj << "usemtl material0\n";
         obj << "#faces\n";  // nb # obj vertex indices for faces start at 1 not 0 like blender.
         for(int i = 0 ; i < mesh.getNumIndices()-3; i=i+3)
         {
-            obj << "f " + ofToString(mesh.getIndex(i)+1) + " " + ofToString(mesh.getIndex(i+1)+1) + " " + ofToString(mesh.getIndex(i+2)+1)  +"\n";
+            obj << "f " + ofToString(mesh.getIndex(i)+1) + "/"+ ofToString(mesh.getIndex(i)+1) + " " + ofToString(mesh.getIndex(i+1)+1) + "/" + ofToString(mesh.getIndex(i+1)+1) + " " + ofToString(mesh.getIndex(i+2)+1)  + "/" + ofToString(mesh.getIndex(i+2)+1)  +"\n";
         }
         obj << "\n";
         
