@@ -63,7 +63,7 @@ public:
     int linkLevel, camDist;
     
     triangulateMesh meshMaker;
-    
+    ofImage floorMap;
     ofImage panoImage;
     ofTexture textureImage;
     
