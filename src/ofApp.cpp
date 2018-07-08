@@ -44,7 +44,7 @@ void ofApp::setup(){
         panoImage.setFromPixels(texturePixels);
     
     b_drawPointCloud = b_showGui = true;
-    b_enableLight = b_updateMesh = b_meshExists = false;;
+    b_enableLight = b_updateMesh = b_meshExists, b_rotateCam = false;;
     linkLevel = 0;
     
     //mesh = streetview[0].getDethMesh();
@@ -98,10 +98,11 @@ void ofApp::draw(){
     stringstream statusStream, statusStream2;
     if (b_enableLight) worldLight.enable();
     cam.begin();
-    ofDrawAxis(100);
-    ofDrawRotationAxes(1);
+    //ofDrawAxis(100);
+    //ofDrawRotationAxes(1);
     glPointSize(pointSize);
     ofEnableDepthTest();
+    if (b_rotateCam) cam.rotate(1, 0, 0, 0);
     if (b_drawPointCloud) {
         for(int i = 0; i < streetview.size(); i++){
             if ( streetview[i].bDataLoaded & streetview[i].bPanoLoaded) {
@@ -124,19 +125,6 @@ void ofApp::draw(){
         }
     } else {
         
-        //        if (b_meshExists == false) {
-        //            ofPixels texturePixels;
-        //            textureImage = streetview[0].getTexture(); //pull in pano texture
-        //            textureImage.readToPixels(texturePixels);
-        //            panoImage.setFromPixels(texturePixels);
-        //            mesh = streetview[0].getDethMesh(); // load street view 0 into mesh object
-        //            int width = (streetview[0].getDepthMapWidth() -1) *6  ;
-        //            int height = streetview[0].getDepthMapHeight() -1 ;
-        //            int vertNum = mesh.getNumVertices();
-        //            // meshMaker.makeTriangles(mesh, width, height, panoImage);
-        //            // meshMaker.setNormals(mesh);
-        //            b_meshExists = true;
-        //        }
         //mesh.setMode(OF_PRIMITIVE_POINTS);
         //glEnable(GL_POINT_SMOOTH); // use circular points instead of square points
         //ofRotateZ(98); //correct alignment of meshes
@@ -145,33 +133,36 @@ void ofApp::draw(){
         glEnable(GL_DEPTH_TEST);
         glShadeModel(GL_TRIANGLES);
         //        mesh.drawVertices();
-       // floorMap.draw(-floorMap.getWidth()/2, - floorMap.getHeight()/2);
-        ofPoint pOrigin = merMap.getScreenLocationFromLatLon(localView[0].lat, localView[0].lon); //
-        for (int i=0; i<localView.size(); i++){
-            if (showMesh[i]) {
-                ofPushMatrix();
-                ofPoint p = merMap.getScreenLocationFromLatLon(localView[i].lat, localView[i].lon); // translate to location using mermap
-                ofTranslate((p.x - pOrigin.x) * scaleMeters, (p.y - pOrigin.y) * scaleMeters);
-                ofRotateZ(rotOffset[i]);
-                ofRotateZ(localView[i].heading);
-                ofSetColor(255,0,0);
-                ofDrawRectangle(0,0, 10, 2);
-                ofSetColor(255);
-                localView[i].mesh.setMode(OF_PRIMITIVE_POINTS);
-                localView[i].image.bind();
-                localView[i].mesh.draw();
-                localView[i].image.unbind();
-                ofPopMatrix();
+        // floorMap.draw(-floorMap.getWidth()/2, - floorMap.getHeight()/2);
+        if (localView.size()>0) {
+            ofPoint pOrigin = merMap.getScreenLocationFromLatLon(localView[0].lat, localView[0].lon); //
+            for (int i=0; i<localView.size(); i++){
+                if (showMesh[i]) {
+                    ofPushMatrix();
+                    ofPoint p = merMap.getScreenLocationFromLatLon(localView[i].lat, localView[i].lon); // translate to location using mermap
+                    ofTranslate((pOrigin.x - p.x ) * scaleMeters, ( pOrigin.y -p.y) * scaleMeters);
+                    ofRotateZ(rotOffset[i]);
+                    ofRotateZ(localView[i].heading);
+                    //ofSetColor(255,0,0);
+                    //ofDrawRectangle(0,0, 10, 2);
+                    ofSetColor(255);
+                    localView[i].mesh.setMode(OF_PRIMITIVE_POINTS);
+                    localView[i].image.bind();
+                    localView[i].mesh.draw();
+                    localView[i].image.unbind();
+                    ofPopMatrix();
+                }
             }
         }
+        
     }
     cam.end();
     worldLight.disable();
     ofDisableDepthTest();
     if (b_showGui) {
-        // statusStream << streetview[0].getPanoId() << " lat " << viewLat << " lon " << viewLong << " dir " << streetview[0].getDirection() << streetview[0].getAddress() << ", " << streetview[0].getRegion() << "meshes " <<streetview.size() << " linkLvl " << linkLevel;
-        // ofDrawBitmapString(statusStream.str(), 20,  20);
-        // ofDrawBitmapString(statusStream2.str(), 20,  40);
+         statusStream << streetview[0].getPanoId() << " lat " << viewLat << " lon " << viewLong << " dir " << streetview[0].getDirection() << streetview[0].getAddress() << ", " << streetview[0].getRegion() << "meshes " <<streetview.size() << " linkLvl " << linkLevel;
+         ofDrawBitmapString(statusStream.str(), 20,  20);
+         ofDrawBitmapString(statusStream2.str(), 20,  40);
         gui.draw();
     }
 }
@@ -572,6 +563,12 @@ void ofApp::keyReleased(int key){
         case '=':
             loadLinks();
             break;
+            
+        case '1':
+            b_rotateCam = !b_rotateCam;
+            break;
+            
+            
     }
 }
 

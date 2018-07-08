@@ -8,7 +8,8 @@
 //#include "ofxXmlSettings.h"
 
 struct streetviewsFromDisc {
-    ofMesh mesh;
+    //ofMesh mesh;
+    ofVboMesh mesh;
     ofImage image;
     float lat, lon;
     int heading, yaw, tilt, groundheight, elevation;
@@ -58,7 +59,7 @@ public:
     ofFileDialogResult openFileResult;
     
     double viewLat, viewLong;
-    bool b_drawPointCloud, b_enableLight, b_updateMesh, b_showGui, b_meshExists;
+    bool b_drawPointCloud, b_enableLight, b_updateMesh, b_showGui, b_meshExists, b_rotateCam;
     string fileName, XMLmodel;
     int linkLevel, camDist;
     
