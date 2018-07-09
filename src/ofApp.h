@@ -47,7 +47,7 @@ public:
     ofxIntSlider rotOffset[20], pointSize;
     ofxToggle filled;
     ofxToggle showMesh[20];
-    ofxPanel gui;
+    ofxPanel guiShow, guiAlign ;
     
     ofLight worldLight;
     ofMesh mesh;
@@ -59,7 +59,7 @@ public:
     ofFileDialogResult openFileResult;
     
     double viewLat, viewLong;
-    bool b_drawPointCloud, b_enableLight, b_updateMesh, b_showGui, b_meshExists, b_rotateCam;
+    bool b_drawPointCloud, b_enableLight, b_updateMesh, b_showGui, b_meshExists, b_rotateCam, b_renderPoints;
     string fileName, XMLmodel;
     int linkLevel, camDist;
     
@@ -76,5 +76,4 @@ public:
     // XML exif data save and load
     ofxXmlSettings XMLsettings;
     
-    
-};
+    };

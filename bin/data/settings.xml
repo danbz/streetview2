@@ -1,45 +1,85 @@
 <group>
 	<showMesh_0>1</showMesh_0>
-	<Rotation_offset0>90</Rotation_offset0>
-	<showMesh_1>1</showMesh_1>
-	<Rotation_offset1>-122</Rotation_offset1>
+	<Rotation_offset0>23</Rotation_offset0>
+	<showMesh_1>0</showMesh_1>
+	<Rotation_offset1>72</Rotation_offset1>
 	<showMesh_2>1</showMesh_2>
-	<Rotation_offset2>-126</Rotation_offset2>
+	<Rotation_offset2>-84</Rotation_offset2>
 	<showMesh_3>0</showMesh_3>
-	<Rotation_offset3>-52</Rotation_offset3>
+	<Rotation_offset3>-7</Rotation_offset3>
 	<showMesh_4>0</showMesh_4>
-	<Rotation_offset4>-174</Rotation_offset4>
+	<Rotation_offset4>149</Rotation_offset4>
 	<showMesh_5>0</showMesh_5>
-	<Rotation_offset5>3</Rotation_offset5>
+	<Rotation_offset5>-18</Rotation_offset5>
 	<showMesh_6>1</showMesh_6>
-	<Rotation_offset6>158</Rotation_offset6>
+	<Rotation_offset6>75</Rotation_offset6>
 	<showMesh_7>0</showMesh_7>
-	<Rotation_offset7>0</Rotation_offset7>
-	<showMesh_8>1</showMesh_8>
-	<Rotation_offset8>0</Rotation_offset8>
-	<showMesh_9>1</showMesh_9>
-	<Rotation_offset9>0</Rotation_offset9>
+	<Rotation_offset7>-153</Rotation_offset7>
+	<showMesh_8>0</showMesh_8>
+	<Rotation_offset8>-126</Rotation_offset8>
+	<showMesh_9>0</showMesh_9>
+	<Rotation_offset9>52</Rotation_offset9>
 	<showMesh_10>1</showMesh_10>
-	<Rotation_offset10>0</Rotation_offset10>
+	<Rotation_offset10>53</Rotation_offset10>
 	<showMesh_11>1</showMesh_11>
-	<Rotation_offset11>0</Rotation_offset11>
+	<Rotation_offset11>135</Rotation_offset11>
 	<showMesh_12>1</showMesh_12>
-	<Rotation_offset12>0</Rotation_offset12>
-	<showMesh_13>1</showMesh_13>
+	<Rotation_offset12>99</Rotation_offset12>
+	<showMesh_13>0</showMesh_13>
 	<Rotation_offset13>0</Rotation_offset13>
-	<showMesh_14>1</showMesh_14>
+	<showMesh_14>0</showMesh_14>
 	<Rotation_offset14>0</Rotation_offset14>
-	<showMesh_15>1</showMesh_15>
+	<showMesh_15>0</showMesh_15>
 	<Rotation_offset15>0</Rotation_offset15>
-	<showMesh_16>1</showMesh_16>
+	<showMesh_16>0</showMesh_16>
 	<Rotation_offset16>0</Rotation_offset16>
-	<showMesh_17>1</showMesh_17>
+	<showMesh_17>0</showMesh_17>
 	<Rotation_offset17>0</Rotation_offset17>
-	<showMesh_18>1</showMesh_18>
+	<showMesh_18>0</showMesh_18>
 	<Rotation_offset18>0</Rotation_offset18>
-	<showMesh_19>1</showMesh_19>
+	<showMesh_19>0</showMesh_19>
 	<Rotation_offset19>0</Rotation_offset19>
 	<pointSize>2</pointSize>
-	<scaleMeters>0.3268</scaleMeters>
+	<scaleMeters>1.01495</scaleMeters>
 <group/>
+<xoffset0>0</xoffset0>
+	<yoffset0>0</yoffset0>
+	<xoffset1>-31.6</xoffset1>
+	<yoffset1>24</yoffset1>
+	<xoffset2>-20.4</xoffset2>
+	<yoffset2>16</yoffset2>
+	<xoffset3>-13.6</xoffset3>
+	<yoffset3>-12.8</yoffset3>
+	<xoffset4>-26</xoffset4>
+	<yoffset4>-53</yoffset4>
+	<xoffset5>-4</xoffset5>
+	<yoffset5>-4</yoffset5>
+	<xoffset6>6</xoffset6>
+	<yoffset6>-6.4</yoffset6>
+	<xoffset7>-37</xoffset7>
+	<yoffset7>-42</yoffset7>
+	<xoffset8>-34</xoffset8>
+	<yoffset8>-40</yoffset8>
+	<xoffset9>-16</xoffset9>
+	<yoffset9>-21</yoffset9>
+	<xoffset10>-19</xoffset10>
+	<yoffset10>-27</yoffset10>
+	<xoffset11>-29</xoffset11>
+	<yoffset11>-31</yoffset11>
+	<xoffset12>-32</xoffset12>
+	<yoffset12>-47</yoffset12>
+	<xoffset13>5</xoffset13>
+	<yoffset13>5</yoffset13>
+	<xoffset14>5</xoffset14>
+	<yoffset14>5</yoffset14>
+	<xoffset15>5</xoffset15>
+	<yoffset15>5</yoffset15>
+	<xoffset16>5</xoffset16>
+	<yoffset16>5</yoffset16>
+	<xoffset17>5</xoffset17>
+	<yoffset17>5</yoffset17>
+	<xoffset18>5</xoffset18>
+	<yoffset18>5</yoffset18>
+	<xoffset19>5</xoffset19>
+	<yoffset19>5</yoffset19>
 </group>

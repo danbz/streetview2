@@ -34,32 +34,30 @@ void ofApp::setup(){
     // streetview.setLatLon( 50.7531791,5.6960133 ); //liege netherlands border post  2
     
     // download the first streetview from online
-        ofxStreetView newStreet;
-        streetview.push_back(newStreet);
-        streetview[0].setLatLon(viewLat, viewLong);
-        streetview[0].setZoom(3);
-        ofPixels texturePixels;
-        textureImage = streetview[0].getTexture(); //pull in pano texture
-        textureImage.readToPixels(texturePixels);
-        panoImage.setFromPixels(texturePixels);
+//        ofxStreetView newStreet;
+//        streetview.push_back(newStreet);
+//        streetview[0].setLatLon(viewLat, viewLong);
+//        streetview[0].setZoom(3);
+//        ofPixels texturePixels;
+//        textureImage = streetview[0].getTexture(); //pull in pano texture
+//        textureImage.readToPixels(texturePixels);
+//        panoImage.setFromPixels(texturePixels);
     
-    b_drawPointCloud = b_showGui = true;
-    b_enableLight = b_updateMesh = b_meshExists, b_rotateCam = false;;
+    b_showGui = true;
+    b_enableLight = b_updateMesh = b_meshExists, b_rotateCam = b_drawPointCloud, b_renderPoints = false;;
     linkLevel = 0;
-    
-    //mesh = streetview[0].getDethMesh();
-    
     string num;
-    gui.setup();
-    gui.add(pointSize.setup("pointSize", 2, 1, 10));
-    gui.add(scaleMeters.setup("scaleMeters", .33, 0.01, 1.0));
+    guiShow.setup();
+    guiAlign.setup();
+    guiShow.add(pointSize.setup("pointSize", 2, 1, 10));
+    guiShow.add(scaleMeters.setup("scaleMeters", .1, 1, 2.0));
     
     for(int i = 0; i < 20; i++){
         num = std::to_string(i);
-        gui.add(showMesh[i].setup("showMesh "+num,1));
-        //gui.add(xOffset[i].setup("latOffset"+num, 5, -20, 20));
-        //gui.add(yOffset[i].setup("longOffset"+num, 5.0, -20, 20));
-        gui.add(rotOffset[i].setup("Rotation offset"+num, 0, -180, 180));
+        guiShow.add(showMesh[i].setup("showMesh "+num,2));
+        guiAlign.add(xOffset[i].setup("xoffset"+num, 5, -100, 100));
+        guiAlign.add(yOffset[i].setup("yoffset"+num, 5.0, -100, 100));
+        guiAlign.add(rotOffset[i].setup("Rotation offset"+num, 0, -180, 180));
     }
     
     rotOffset[0] = 0;
@@ -75,6 +73,8 @@ void ofApp::setup(){
     // ofVec3f camStart = (merMapWidth/2, merMapHeight/2, -100);
     // cam.setUpAxis(camStart); //set up useful location for camera start
     camDist = 0;
+    ofVec3f camOrigin(0.0,0.0,0.0);
+    cam.lookAt(camOrigin);
     cam.setDistance(camDist);
     
     // load hand drawn map - floor
@@ -85,44 +85,46 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
     // iterate through vector of streetview objects
-    for(int i = 0; i < streetview.size(); i++){
-        streetview[i].update();
-        streetview[i].setUseTexture(true);
-    }
+//    for(int i = 0; i < streetview.size(); i++){
+//        streetview[i].update();
+//        streetview[i].setUseTexture(true);
+//    }
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    ofBackground(50);
-    ofSetColor(200, 200, 200);
-    stringstream statusStream, statusStream2;
-    if (b_enableLight) worldLight.enable();
+    ofBackground(20);
+    //ofSetColor(200, 200, 200);
+    
+    //if (b_enableLight) worldLight.enable();
     cam.begin();
     //ofDrawAxis(100);
     //ofDrawRotationAxes(1);
     glPointSize(pointSize);
     ofEnableDepthTest();
-    if (b_rotateCam) cam.rotate(1, 0, 0, 0);
+  
     if (b_drawPointCloud) {
-        for(int i = 0; i < streetview.size(); i++){
-            if ( streetview[i].bDataLoaded & streetview[i].bPanoLoaded) {
-                //ofRotateZ(98); //correct alignment of meshes
-                ofPushMatrix();
-                if (showMesh[i]) {
-                    ofPoint pOrigin = merMap.getScreenLocationFromLatLon(streetview[0].getLat(), streetview[0].getLon()); //
-                    ofPoint p = merMap.getScreenLocationFromLatLon(streetview[i].getLat(), streetview[i].getLon()); // translate to location using mermap
-                    ofSetColor(255,0,0);
-                    ofTranslate((p.x - pOrigin.x) * scaleMeters, (p.y - pOrigin.y) * scaleMeters);
-                    ofRotateZ(rotOffset[i]);
-                    //ofRotateZ(streetview[i].getTiltYaw());
-                    ofRotateZ(180-streetview[i].getDirection());
-                    ofDrawRectangle(0,0, 50, 20);
-                    ofSetColor(255);
-                    streetview[i].draw();
-                }
-                ofPopMatrix();
-            }
-        }
+//        for(int i = 0; i < streetview.size(); i++){
+//            if ( streetview[i].bDataLoaded & streetview[i].bPanoLoaded) {
+//                //ofRotateZ(98); //correct alignment of meshes
+//                ofPushMatrix();
+//                if (showMesh[i]) {
+//                   // ofPoint pOrigin = merMap.getScreenLocationFromLatLon(streetview[0].getLat(), streetview[0].getLon()); //
+//                    //ofPoint p = merMap.getScreenLocationFromLatLon(streetview[i].getLat(), streetview[i].getLon()); // translate to location using mermap
+//                    ofSetColor(255,0,0);
+//                    //ofTranslate((pOrigin.x + xOffset[i]) * scaleMeters, ( pOrigin.y + yOffset[i]) * scaleMeters);
+//                    ofTranslate((xOffset[i]) * scaleMeters, (yOffset[i]) * scaleMeters);
+//
+//                    ofRotateZ(rotOffset[i]);
+//                    //ofRotateZ(streetview[i].getTiltYaw());
+//                    ofRotateZ(180-streetview[i].getDirection());
+//                    ofDrawRectangle(0,0, 50, 20);
+//                    ofSetColor(255);
+//                   // streetview[i].draw();
+//                }
+//                ofPopMatrix();
+//            }
+//        }
     } else {
         
         //mesh.setMode(OF_PRIMITIVE_POINTS);
@@ -131,39 +133,54 @@ void ofApp::draw(){
         // ofScale(1, -1, -1);  // the projected points are 'upside down' and 'backwards'
         // ofTranslate(0, 0, 0); // center the points a bit
         glEnable(GL_DEPTH_TEST);
-        glShadeModel(GL_TRIANGLES);
+       // glShadeModel(GL_TRIANGLES);
         //        mesh.drawVertices();
         // floorMap.draw(-floorMap.getWidth()/2, - floorMap.getHeight()/2);
         if (localView.size()>0) {
-            ofPoint pOrigin = merMap.getScreenLocationFromLatLon(localView[0].lat, localView[0].lon); //
+           // ofPoint pOrigin = merMap.getScreenLocationFromLatLon(localView[0].lat, localView[0].lon); //
+            if (b_rotateCam) {
+                camDist++;
+            }
             for (int i=0; i<localView.size(); i++){
                 if (showMesh[i]) {
                     ofPushMatrix();
-                    ofPoint p = merMap.getScreenLocationFromLatLon(localView[i].lat, localView[i].lon); // translate to location using mermap
-                    ofTranslate((pOrigin.x - p.x ) * scaleMeters, ( pOrigin.y -p.y) * scaleMeters);
+                    ofRotate(camDist, 0, 0, 1);
+                    if (b_renderPoints){
+                        localView[i].mesh.setMode(OF_PRIMITIVE_POINTS);
+                    } else {
+                        localView[i].mesh.setMode(OF_PRIMITIVE_LINES);
+                    }
+                    //localView[i].mesh.setMode(OF_PRIMITIVE_LINES);
+                    //ofVec2f p = merMap.getScreenLocationFromLatLon(localView[i].lat, localView[i].lon); // translate to location using mermap
+                    //ofTranslate(( pOrigin.x + p.x ) * scaleMeters, (  pOrigin.y + p.y) * scaleMeters);
+                    ofTranslate((xOffset[i]) * scaleMeters, (yOffset[i]) * scaleMeters);
                     ofRotateZ(rotOffset[i]);
-                    ofRotateZ(localView[i].heading);
+                    ofRotateZ(localView[i].yaw);
                     //ofSetColor(255,0,0);
                     //ofDrawRectangle(0,0, 10, 2);
-                    ofSetColor(255);
-                    localView[i].mesh.setMode(OF_PRIMITIVE_POINTS);
+                    //ofSetColor(255);
+                    //localView[i].mesh.setMode(OF_PRIMITIVE_POINTS);
                     localView[i].image.bind();
                     localView[i].mesh.draw();
                     localView[i].image.unbind();
                     ofPopMatrix();
+                   
                 }
             }
         }
-        
     }
     cam.end();
     worldLight.disable();
     ofDisableDepthTest();
     if (b_showGui) {
-         statusStream << streetview[0].getPanoId() << " lat " << viewLat << " lon " << viewLong << " dir " << streetview[0].getDirection() << streetview[0].getAddress() << ", " << streetview[0].getRegion() << "meshes " <<streetview.size() << " linkLvl " << linkLevel;
-         ofDrawBitmapString(statusStream.str(), 20,  20);
-         ofDrawBitmapString(statusStream2.str(), 20,  40);
-        gui.draw();
+        ofSetColor(255);
+        stringstream statusStream;
+         //statusStream << streetview[0].getPanoId() << " lat " << viewLat << " lon " << viewLong << " dir " << streetview[0].getDirection() << streetview[0].getAddress() << ", " << streetview[0].getRegion() << "meshes " <<streetview.size() << " linkLvl " << linkLevel;
+          statusStream << ofToString(ofGetFrameRate())  << " fps" ;
+        ofDrawBitmapString(statusStream.str(), 20,  20);
+         //ofDrawBitmapString(statusStream2.str(), 20,  40);
+        guiShow.draw();
+        guiAlign.draw();
     }
 }
 
@@ -427,16 +444,6 @@ void ofApp::loadPlyData(){
     ofFileDialogResult result = ofSystemLoadDialog("Choose a folder of recorded Volca PNG data", true, ofToDataPath(""));
     if (result.getPath() != "") {
         string  filePath =result.getPath();
-        //    ofFile file (openFileResult.getPath());
-        //    if (file.exists()){
-        //        string fileExtension = ofToUpper(file.getExtension());
-        //        //cout << "its a file ok" << endl;
-        //        ofDirectory directory  (openFileResult.getPath());
-        //        ofFile file(ofToDataPath(_file + "/"));
-        //        string path = file.getAbsolutePath();
-        //        file.close();
-        // if (fileExtension == "ply" || fileExtension == "PLY") {
-        // count files in directory
         string path = ofToDataPath(filePath + "/");
         ofDirectory dir(path);
         dir.allowExt("ply");
@@ -458,8 +465,9 @@ void ofApp::loadPlyData(){
             cout << plyFileToload << " " << textureFileToload << " " << i << endl;
             localView[i].mesh.load(plyFileToload);
             localView[i].image.load(textureFileToload);
+            //localView[i].image.resize(localView[i].image.getWidth()/2, localView[i].image.getHeight()/2);
+            localView[i].mesh.setMode(OF_PRIMITIVE_POINTS);
             loadXMLData(xmlFileToload, i);
-            // parse lat lon and rotation from '_' seprated elements of file names
             string fileNameData =dir.getName(i*2);
     
             cout << "loaded png & ply " << endl;
@@ -499,34 +507,34 @@ void ofApp::keyPressed(int key){
 void ofApp::keyReleased(int key){
     
     switch (key) {
-        case 'p':
-        case 'P':
-            b_drawPointCloud =!b_drawPointCloud;
-            break;
-            
+//        case 'p':
+//        case 'P':
+//            b_drawPointCloud =!b_drawPointCloud;
+//            break;
+//
         case 'f':
         case 'F':
             ofToggleFullscreen();
             break;
             
-        case 'l':
-        case 'L':
-            b_enableLight = !b_enableLight;
-            break;
+//        case 'l':
+//        case 'L':
+//            b_enableLight = !b_enableLight;
+//            break;
             
-        case 's':
-        case 'S':
-            exportOBJ(mesh);
-            break;
-            
-        case 'c':
-        case 'C':
-            break;
-            
-        case 'e':
-        case 'E':
-            exportPLY(mesh);
-            break;
+//        case 's':
+//        case 'S':
+//            exportOBJ(mesh);
+//            break;
+//
+//        case 'c':
+//        case 'C':
+//            break;
+//
+//        case 'e':
+//        case 'E':
+//            exportPLY(mesh);
+//            break;
             
         case 'g':
         case 'G':
@@ -543,29 +551,33 @@ void ofApp::keyReleased(int key){
             cam.reset();
             break;
             
-        case 'w':
-            loadNewStreet(0);
+//        case 'w':
+//            loadNewStreet(0);
+//            break;
+//
+//        case 'x':
+//            loadNewStreet(180);
+//            break;
+//
+//        case 'a':
+//            loadNewStreet(90);
+//            break;
+//
+//        case 'd':
+//            loadNewStreet(270);
+//            break;
+            
+//        case '+':
+//        case '=':
+//            loadLinks();
             break;
             
-        case 'x':
-            loadNewStreet(180);
-            break;
+        case ' ':
             
-        case 'a':
-            loadNewStreet(90);
-            break;
-            
-        case 'd':
-            loadNewStreet(270);
-            break;
-            
-        case '+':
-        case '=':
-            loadLinks();
-            break;
-            
-        case '1':
             b_rotateCam = !b_rotateCam;
+            break;
+        case '2':
+            b_renderPoints = !b_renderPoints;
             break;
             
             

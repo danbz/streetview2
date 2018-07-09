@@ -20,41 +20,54 @@ void triangulateMesh::setup(){
 
 //--------------------------------------------------------------
 
-void triangulateMesh::makeTriangles( ofMesh &mesh, int width, int height, ofImage textureImage){
+void triangulateMesh::makeTriangles( ofMesh &mesh, int meshW, int meshH, ofImage textureImage){
     ofColor c;
     ofShortColor zGrey = 0;
     int textureW = textureImage.getWidth();
     int textureH = textureImage.getHeight();
 
     ofVec3f v3, v3b;
-    int meshW = width ;
-    int meshH = height;
     int index =0;
     
-    for (int y = 0; y<height-1; y++){ // triangulate mesh
-        for (int x=0; x<width-1; x++ ){
+    for (int x=0; x<meshW-1; x++ ){ // swapped these around ?>? 9 july 2018
+        for (int y = 0; y<meshH-1; y++){ // triangulate mesh
             v3.set(0,0,0);
-//              if ((mesh.getVertex(x+y*meshW))==v3 or (mesh.getVertex((x+1)+y*(meshW)))==v3 or (mesh.getVertex(x+(y+1)*meshW)==v3)){
-//              } else {
             v3 = mesh.getVertex(index);
             v3b = mesh.getVertex(index+1);
-           // if (abs (v3.z-v3b.z)>0 && abs(v3.z-v3b.z) < volcaRenderer.triLength){
-                //cout <<v3.z - v3b.z << endl;
+ 
             mesh.addIndex(x+y*meshW);               // 0
             mesh.addIndex((x+1)+y*meshW);           // 1
             mesh.addIndex(x+(y+1)*meshW);           // 10
-           // }
+            
             mesh.addIndex((x+1)+y*meshW);           // 1
             mesh.addIndex((x+1)+(y+1)*meshW);       // 11
             mesh.addIndex(x+(y+1)*meshW);           // 10
-           // }
-             c = (textureImage.getColor(ofMap(x, 0, width, 0, textureW),ofMap(y, 0, height, 0, textureH))); // getting RGB from ofShortImage
-           // c = ofClamp(index, 0, 255 );
-            //c = (100,100,0);
+            
+            c = (textureImage.getColor(ofMap(x, 0, meshW, 0, textureW),ofMap(y, 0, meshH, 0, textureH))); // getting RGB from ofShortImage
             c.clamp();
-            //cout << c << " color " << index << " index" << endl;
             mesh.addColor( c);
             index ++;
+            
+            /// from streetview triangulation
+//            for (int x = 0; x < mapWidth - 1; x ++) {
+//                const int next_x = x + 1;
+//                int map_next_x = next_x;
+//                if (map_next_x >= mapWidth)
+//                    map_next_x -= mapWidth;
+//                const unsigned int endHeight = mapHeight - 1;
+//                for (unsigned int y = 0; y < endHeight; y ++) {
+//                    const int next_y = y + 1;
+//
+//                    addVertex(next_x, y);
+//                    addVertex(x, y);
+//                    addVertex(x, next_y);
+//
+//                    addVertex(x, next_y);
+//                    addVertex(next_x, next_y);
+//                    addVertex(next_x, y);
+//
+//                }
+//            }
         }
     }
     
