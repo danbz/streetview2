@@ -150,7 +150,6 @@ void ofApp::draw(){
                     } else {
                         localView[i].mesh.setMode(OF_PRIMITIVE_LINES);
                     }
-                    //localView[i].mesh.setMode(OF_PRIMITIVE_LINES);
                     //ofVec2f p = merMap.getScreenLocationFromLatLon(localView[i].lat, localView[i].lon); // translate to location using mermap
                     //ofTranslate(( pOrigin.x + p.x ) * scaleMeters, (  pOrigin.y + p.y) * scaleMeters);
                     ofTranslate((xOffset[i]) * scaleMeters, (yOffset[i]) * scaleMeters);
@@ -507,34 +506,34 @@ void ofApp::keyPressed(int key){
 void ofApp::keyReleased(int key){
     
     switch (key) {
-//        case 'p':
-//        case 'P':
-//            b_drawPointCloud =!b_drawPointCloud;
-//            break;
-//
+        case 'p':
+        case 'P':
+            b_drawPointCloud =!b_drawPointCloud;
+            break;
+
         case 'f':
         case 'F':
             ofToggleFullscreen();
             break;
             
-//        case 'l':
-//        case 'L':
-//            b_enableLight = !b_enableLight;
-//            break;
+        case 'l':
+        case 'L':
+            b_enableLight = !b_enableLight;
+            break;
             
-//        case 's':
-//        case 'S':
-//            exportOBJ(mesh);
-//            break;
-//
-//        case 'c':
-//        case 'C':
-//            break;
-//
-//        case 'e':
-//        case 'E':
-//            exportPLY(mesh);
-//            break;
+        case 's':
+        case 'S':
+            exportOBJ(mesh);
+            break;
+
+        case 'c':
+        case 'C':
+            break;
+
+        case 'e':
+        case 'E':
+            exportPLY(mesh);
+            break;
             
         case 'g':
         case 'G':
@@ -551,25 +550,25 @@ void ofApp::keyReleased(int key){
             cam.reset();
             break;
             
-//        case 'w':
-//            loadNewStreet(0);
-//            break;
-//
-//        case 'x':
-//            loadNewStreet(180);
-//            break;
-//
-//        case 'a':
-//            loadNewStreet(90);
-//            break;
-//
-//        case 'd':
-//            loadNewStreet(270);
-//            break;
+        case 'w':
+            loadNewStreet(0);
+            break;
+
+        case 'x':
+            loadNewStreet(180);
+            break;
+
+        case 'a':
+            loadNewStreet(90);
+            break;
+
+        case 'd':
+            loadNewStreet(270);
+            break;
             
-//        case '+':
-//        case '=':
-//            loadLinks();
+        case '+':
+        case '=':
+            loadLinks();
             break;
             
         case ' ':
